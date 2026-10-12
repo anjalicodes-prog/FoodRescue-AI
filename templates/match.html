@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Receiver Match - FoodRescue AI</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f8f6;
+            color: #26352d;
+        }
+
+
+        /* NAVBAR */
+
+        .navbar {
+            height: 70px;
+            background: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 7%;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .logo {
+            text-decoration: none;
+            color: #238b57;
+            font-size: 22px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-icon {
+            font-size: 27px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #444;
+            padding: 10px 17px;
+            border-radius: 8px;
+        }
+
+        .nav-links a:hover,
+        .nav-links .active {
+            background: #e8f6ee;
+            color: #238b57;
+            font-weight: bold;
+        }
+
+
+        /* CONTAINER */
+
+        .container {
+            width: 90%;
+            max-width: 1000px;
+            margin: 50px auto;
+        }
+
+        .heading {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .heading h1 {
+            color: #238b57;
+            margin-bottom: 10px;
+        }
+
+        .heading p {
+            color: #777;
+        }
+
+
+        /* PREDICTION CARD */
+
+        .prediction-card {
+            background: white;
+            padding: 25px;
+            border-radius: 14px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .prediction-card h2 {
+            color: #238b57;
+            margin-bottom: 12px;
+        }
+
+        .prediction-number {
+            font-size: 36px;
+            font-weight: bold;
+            color: #e67e22;
+        }
+
+
+        /* BEST MATCH */
+
+        .best-match {
+            background: linear-gradient(
+                135deg,
+                #e8f6ee,
+                #ffffff
+            );
+
+            border: 2px solid #238b57;
+
+            border-radius: 16px;
+
+            padding: 30px;
+
+            margin-bottom: 30px;
+
+            text-align: center;
+
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+        }
+
+        .best-match h2 {
+            color: #238b57;
+            margin-bottom: 20px;
+        }
+
+        .receiver-name {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+
+        .details {
+            display: flex;
+            justify-content: center;
+            gap: 35px;
+            flex-wrap: wrap;
+        }
+
+        .detail {
+            background: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+        }
+
+        .detail strong {
+            display: block;
+            font-size: 20px;
+            color: #238b57;
+            margin-bottom: 5px;
+        }
+
+        .detail span {
+            color: #777;
+            font-size: 13px;
+        }
+
+
+        .score {
+            font-size: 25px;
+            font-weight: bold;
+            color: #238b57;
+            margin-top: 20px;
+        }
+
+        .status {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 10px 18px;
+            background: #238b57;
+            color: white;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+
+        /* OTHER RECEIVERS */
+
+        .other-title {
+            margin: 30px 0 15px;
+            color: #333;
+        }
+
+        .receiver-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+        }
+
+        .receiver-table th {
+            background: #238b57;
+            color: white;
+            padding: 14px;
+        }
+
+        .receiver-table td {
+            padding: 14px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+        }
+
+
+        .back-btn {
+            display: inline-block;
+            margin-top: 30px;
+            text-decoration: none;
+            background: #238b57;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+        }
+
+        .rescue-btn {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 12px 22px;
+    background: #e67e22;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+}
+
+.rescue-btn:hover {
+    background: #cf711f;
+}
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- NAVBAR -->
+
+<nav class="navbar">
+
+    <a href="/" class="logo">
+
+        <span class="logo-icon">🍱</span>
+
+        <span>FoodRescue AI</span>
+
+    </a>
+
+
+    <div class="nav-links">
+
+        <a href="/">Home</a>
+
+        <a href="/donate">
+            Predict Surplus
+        </a>
+
+        <a href="/dashboard" class="active">
+            Dashboard
+        </a>
+
+    </div>
+
+</nav>
+
+
+
+<div class="container">
+
+
+    <div class="heading">
+
+        <h1>🎯 Smart Receiver Matching</h1>
+
+        <p>
+            AI finds the most suitable receiver for the predicted surplus food.
+        </p>
+
+    </div>
+
+
+
+    <!-- PREDICTION -->
+
+    <div class="prediction-card">
+
+        <h2>AI Predicted Surplus</h2>
+
+        <div class="prediction-number">
+
+            {{ donation["predicted_surplus"] }} Meals
+
+        </div>
+
+        <p>
+            Urgency:
+            <strong>
+                {{ donation["urgency_level"] }}
+            </strong>
+            — {{ donation["urgency_score"] }}/100
+        </p>
+
+    </div>
+
+
+
+    <!-- BEST MATCH -->
+
+    <div class="best-match">
+
+        <h2>🏆 Best Receiver Match</h2>
+
+        <div class="receiver-name">
+
+            {{ best_receiver["name"] }}
+
+        </div>
+
+
+        <div class="details">
+
+
+            <div class="detail">
+
+                <strong>
+                    {{ best_receiver["capacity"] }}
+                </strong>
+
+                <span>
+                    Meal Capacity
+                </span>
+
+            </div>
+
+
+            <div class="detail">
+
+                <strong>
+                    {{ best_receiver["distance"] }} km
+                </strong>
+
+                <span>
+                    Estimated Distance
+                </span>
+
+            </div>
+
+
+            <div class="detail">
+
+                <strong>
+                    {{ best_receiver["match_score"] }}/100
+                </strong>
+
+                <span>
+                    Match Score
+                </span>
+
+            </div>
+
+
+        </div>
+
+
+        <div class="score">
+
+            🎯 AI Recommended
+
+        </div>
+
+
+        <div class="status">
+
+            🟢 Ready to Rescue
+
+        </div>
+
+        <a
+    href="/rescue/{{ donation['id'] }}"
+    class="rescue-btn"
+>
+    🚚 Mark as Rescued
+</a>
+
+    </div>
+
+
+
+    <!-- OTHER RECEIVERS -->
+
+    <h2 class="other-title">
+        Other Receiver Options
+    </h2>
+
+
+    <table class="receiver-table">
+
+        <thead>
+
+            <tr>
+
+                <th>Receiver</th>
+
+                <th>Capacity</th>
+
+                <th>Distance</th>
+
+                <th>Match Score</th>
+
+            </tr>
+
+        </thead>
+
+
+        <tbody>
+
+            {% for receiver in receivers %}
+
+            <tr>
+
+                <td>
+                    {{ receiver["name"] }}
+                </td>
+
+                <td>
+                    {{ receiver["capacity"] }} meals
+                </td>
+
+                <td>
+                    {{ receiver["distance"] }} km
+                </td>
+
+                <td>
+                    <strong>
+                        {{ receiver["match_score"] }}/100
+                    </strong>
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+
+    <a href="/dashboard" class="back-btn">
+        ← Back to Dashboard
+    </a>
+
+
+</div>
+
+
+</body>
+
+</html>

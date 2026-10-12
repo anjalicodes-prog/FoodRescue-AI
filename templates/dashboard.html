@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Dashboard | FoodRescue AI</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px 50px;
+        }
+
+        .dashboard-header {
+            margin-bottom: 30px;
+        }
+
+        .dashboard-header h1 {
+            color: #173f2f;
+            margin-bottom: 8px;
+        }
+
+        .dashboard-header p {
+            color: #6b756f;
+        }
+
+
+        /* ================= STATS ================= */
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 22px;
+            border-radius: 15px;
+            border: 1px solid #e5ebe7;
+            box-shadow: 0 5px 18px rgba(0,0,0,0.05);
+        }
+
+        .stat-card h3 {
+            font-size: 14px;
+            color: #68736d;
+            margin-bottom: 10px;
+        }
+
+        .stat-number {
+            font-size: 30px;
+            font-weight: bold;
+            color: #1f7a4d;
+        }
+
+
+        /* ================= ANALYTICS ================= */
+
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 22px;
+            margin-bottom: 30px;
+        }
+
+        .analytics-card {
+            background: white;
+            padding: 25px;
+            border-radius: 17px;
+            border: 1px solid #e5ebe7;
+            box-shadow: 0 5px 18px rgba(0,0,0,0.05);
+        }
+
+        .analytics-card h2 {
+            color: #173f2f;
+            font-size: 20px;
+            margin-bottom: 25px;
+        }
+
+
+        /* ================= BAR CHART ================= */
+
+        .bar-row {
+            margin-bottom: 18px;
+        }
+
+        .bar-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 7px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .bar-bg {
+            height: 13px;
+            background: #edf1ee;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            border-radius: 20px;
+        }
+
+        .bar-predicted {
+            background: #72b890;
+        }
+
+        .bar-rescued {
+            background: #1f7a4d;
+        }
+
+
+        /* ================= DONATION TABLE ================= */
+
+        .table-card {
+            background: white;
+            padding: 25px;
+            border-radius: 17px;
+            border: 1px solid #e5ebe7;
+            box-shadow: 0 5px 18px rgba(0,0,0,0.05);
+            overflow-x: auto;
+        }
+
+        .table-card h2 {
+            color: #173f2f;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 900px;
+        }
+
+        th {
+            background: #f1f8f4;
+            color: #173f2f;
+            padding: 13px;
+            text-align: left;
+            font-size: 13px;
+        }
+
+        td {
+            padding: 13px;
+            border-bottom: 1px solid #edf0ee;
+            font-size: 13px;
+        }
+
+        tr:hover {
+            background: #fafdfb;
+        }
+
+
+        /* ================= URGENCY ================= */
+
+        .urgency {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .critical {
+            background: #fde2e2;
+            color: #c62828;
+        }
+
+        .high {
+            background: #fff0dc;
+            color: #d66a00;
+        }
+
+        .medium {
+            background: #fff8d9;
+            color: #9b7900;
+        }
+
+        .low {
+            background: #e1f4e8;
+            color: #237348;
+        }
+
+
+        /* ================= BUTTON ================= */
+
+        .match-btn {
+            display: inline-block;
+            background: #1f7a4d;
+            color: white;
+            padding: 8px 13px;
+            border-radius: 7px;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .match-btn:hover {
+            background: #17633e;
+        }
+
+
+        /* ================= EMPTY ================= */
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #777;
+        }
+
+        .empty-state a {
+            display: inline-block;
+            margin-top: 15px;
+            background: #1f7a4d;
+            color: white;
+            padding: 11px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+        }
+
+
+        /* ================= RESPONSIVE ================= */
+
+        @media (max-width: 900px) {
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .analytics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 550px) {
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- ================= NAVBAR ================= -->
+
+<nav class="navbar">
+
+    <div class="nav-logo">
+        🍱 FoodRescue AI
+    </div>
+
+    <div class="nav-links">
+
+        <a href="/">
+            Home
+        </a>
+
+        <a href="/donate">
+            Predict Surplus
+        </a>
+
+        <a href="/dashboard"
+           class="active">
+            Dashboard
+        </a>
+
+        <a href="/impact">
+            Impact
+        </a>
+
+    </div>
+
+</nav>
+
+
+<!-- ================= MAIN ================= -->
+
+<div class="dashboard-container">
+
+
+    <div class="dashboard-header">
+
+        <h1>
+            📊 Food Rescue Dashboard
+        </h1>
+
+        <p>
+            Monitor AI predictions, urgency and rescue operations.
+        </p>
+
+    </div>
+
+
+    <!-- ================= STATS ================= -->
+
+    <div class="stats-grid">
+
+        <div class="stat-card">
+
+            <h3>
+                Total Predictions
+            </h3>
+
+            <div class="stat-number">
+                {{ donations|length }}
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <h3>
+                Predicted Surplus
+            </h3>
+
+            <div class="stat-number">
+                {{ donations|sum(attribute='predicted_surplus') }}
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <h3>
+                Critical Cases
+            </h3>
+
+            <div class="stat-number">
+
+                {{
+                    donations
+                    |selectattr('urgency_level', 'equalto', 'Critical')
+                    |list
+                    |length
+                }}
+
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <h3>
+                High Priority
+            </h3>
+
+            <div class="stat-number">
+
+                {{
+                    donations
+                    |selectattr('urgency_level', 'equalto', 'High')
+                    |list
+                    |length
+                }}
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= ANALYTICS ================= -->
+
+    <div class="analytics-grid">
+
+
+        <!-- SURPLUS ANALYTICS -->
+
+        <div class="analytics-card">
+
+            <h2>
+                🍽️ Surplus Overview
+            </h2>
+
+
+            {% set total_surplus =
+                donations|sum(attribute='predicted_surplus')
+            %}
+
+
+            <div class="bar-row">
+
+                <div class="bar-label">
+
+                    <span>
+                        Predicted Surplus
+                    </span>
+
+                    <span>
+                        {{ total_surplus }} meals
+                    </span>
+
+                </div>
+
+                <div class="bar-bg">
+
+                    <div class="bar-fill bar-predicted"
+                         style="width:
+                         {% if total_surplus > 0 %}
+                            100%
+                         {% else %}
+                            0%
+                         {% endif %};">
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="bar-row">
+
+                <div class="bar-label">
+
+                    <span>
+                        Average Surplus
+                    </span>
+
+                    <span>
+
+                        {% if donations|length > 0 %}
+
+                            {{
+                                (total_surplus / donations|length)
+                                |round(1)
+                            }}
+
+                        {% else %}
+
+                            0
+
+                        {% endif %}
+
+                        meals
+
+                    </span>
+
+                </div>
+
+                <div class="bar-bg">
+
+                    <div class="bar-fill bar-rescued"
+                         style="width:
+                         {% if total_surplus > 0 %}
+                            60%
+                         {% else %}
+                            0%
+                         {% endif %};">
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- URGENCY ANALYTICS -->
+
+        <div class="analytics-card">
+
+            <h2>
+                🚨 Urgency Distribution
+            </h2>
+
+
+            {% set total = donations|length %}
+
+
+            <div class="bar-row">
+
+                <div class="bar-label">
+
+                    <span>🔴 Critical</span>
+
+                    <span>
+                        {{
+                            donations
+                            |selectattr(
+                                'urgency_level',
+                                'equalto',
+                                'Critical'
+                            )
+                            |list
+                            |length
+                        }}
+                    </span>
+
+                </div>
+
+                <div class="bar-bg">
+
+                    <div class="bar-fill"
+                         style="
+                         background:#d62828;
+                         width:
+                         {% if total > 0 %}
+                         {{
+                            (
+                                donations
+                                |selectattr(
+                                    'urgency_level',
+                                    'equalto',
+                                    'Critical'
+                                )
+                                |list
+                                |length
+                                / total * 100
+                            )|round(1)
+                         }}%
+                         {% else %}
+                         0%
+                         {% endif %};
+                         ">
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="bar-row">
+
+                <div class="bar-label">
+
+                    <span>🟠 High</span>
+
+                    <span>
+                        {{
+                            donations
+                            |selectattr(
+                                'urgency_level',
+                                'equalto',
+                                'High'
+                            )
+                            |list
+                            |length
+                        }}
+                    </span>
+
+                </div>
+
+                <div class="bar-bg">
+
+                    <div class="bar-fill"
+                         style="
+                         background:#f77f00;
+                         width:
+                         {% if total > 0 %}
+                         {{
+                            (
+                                donations
+                                |selectattr(
+                                    'urgency_level',
+                                    'equalto',
+                                    'High'
+                                )
+                                |list
+                                |length
+                                / total * 100
+                            )|round(1)
+                         }}%
+                         {% else %}
+                         0%
+                         {% endif %};
+                         ">
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="bar-row">
+
+                <div class="bar-label">
+
+                    <span>🟡 Medium</span>
+
+                    <span>
+                        {{
+                            donations
+                            |selectattr(
+                                'urgency_level',
+                                'equalto',
+                                'Medium'
+                            )
+                            |list
+                            |length
+                        }}
+                    </span>
+
+                </div>
+
+                <div class="bar-bg">
+
+                    <div class="bar-fill"
+                         style="
+                         background:#fcbf49;
+                         width:
+                         {% if total > 0 %}
+                         {{
+                            (
+                                donations
+                                |selectattr(
+                                    'urgency_level',
+                                    'equalto',
+                                    'Medium'
+                                )
+                                |list
+                                |length
+                                / total * 100
+                            )|round(1)
+                         }}%
+                         {% else %}
+                         0%
+                         {% endif %};
+                         ">
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="bar-row">
+
+                <div class="bar-label">
+
+                    <span>🟢 Low</span>
+
+                    <span>
+                        {{
+                            donations
+                            |selectattr(
+                                'urgency_level',
+                                'equalto',
+                                'Low'
+                            )
+                            |list
+                            |length
+                        }}
+                    </span>
+
+                </div>
+
+                <div class="bar-bg">
+
+                    <div class="bar-fill"
+                         style="
+                         background:#52b788;
+                         width:
+                         {% if total > 0 %}
+                         {{
+                            (
+                                donations
+                                |selectattr(
+                                    'urgency_level',
+                                    'equalto',
+                                    'Low'
+                                )
+                                |list
+                                |length
+                                / total * 100
+                            )|round(1)
+                         }}%
+                         {% else %}
+                         0%
+                         {% endif %};
+                         ">
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= DONATION TABLE ================= -->
+
+    <div class="table-card">
+
+        <h2>
+            🍱 Prediction History
+        </h2>
+
+
+        {% if donations %}
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>ID</th>
+
+                    <th>People</th>
+
+                    <th>Food Prepared</th>
+
+                    <th>Previous Surplus</th>
+
+                    <th>Predicted Surplus</th>
+
+                    <th>Urgency</th>
+
+                    <th>Score</th>
+
+                    <th>Action</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for donation in donations %}
+
+                <tr>
+
+                    <td>
+                        #{{ donation['id'] }}
+                    </td>
+
+                    <td>
+                        {{ donation['expected_people'] }}
+                    </td>
+
+                    <td>
+                        {{ donation['food_prepared'] }}
+                    </td>
+
+                    <td>
+                        {{ donation['previous_surplus'] }}
+                    </td>
+
+                    <td>
+                        <strong>
+                            {{ donation['predicted_surplus'] }}
+                        </strong>
+                    </td>
+
+                    <td>
+
+                        <span class="urgency
+                            {% if donation['urgency_level'] == 'Critical' %}
+                                critical
+                            {% elif donation['urgency_level'] == 'High' %}
+                                high
+                            {% elif donation['urgency_level'] == 'Medium' %}
+                                medium
+                            {% else %}
+                                low
+                            {% endif %}
+                        ">
+
+                            {{ donation['urgency_level'] }}
+
+                        </span>
+
+                    </td>
+
+                    <td>
+                        {{ donation['urgency_score'] }}/100
+                    </td>
+
+                    <td>
+
+                        <a href="/match/{{ donation['id'] }}"
+                           class="match-btn">
+
+                            🎯 Find Receiver
+
+                        </a>
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+        {% else %}
+
+        <div class="empty-state">
+
+            <h3>
+                No predictions yet
+            </h3>
+
+            <p>
+                Create your first food surplus prediction.
+            </p>
+
+            <a href="/donate">
+                Start Prediction
+            </a>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+
+</div>
+
+
+</body>
+
+</html>

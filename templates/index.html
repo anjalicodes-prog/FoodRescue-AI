@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>FoodRescue AI | Smart Food Waste Rescue</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f7faf8;
+            color: #173f2f;
+        }
+
+
+        /* ================= NAVBAR ================= */
+
+        .home-navbar {
+            height: 72px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 7%;
+            border-bottom: 1px solid #e8eee9;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .home-logo {
+            font-size: 22px;
+            font-weight: bold;
+            color: #1f7a4d;
+        }
+
+        .home-nav-links {
+            display: flex;
+            align-items: center;
+            gap: 28px;
+        }
+
+        .home-nav-links a {
+            text-decoration: none;
+            color: #444;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .home-nav-links a:hover {
+            color: #1f7a4d;
+        }
+
+        .nav-predict {
+            background: #1f7a4d;
+            color: white !important;
+            padding: 11px 18px;
+            border-radius: 8px;
+        }
+
+
+        /* ================= HERO ================= */
+
+        .hero {
+            min-height: 620px;
+            display: flex;
+            align-items: center;
+            padding: 70px 7%;
+            background:
+                linear-gradient(
+                    135deg,
+                    #eef8f2 0%,
+                    #ffffff 55%,
+                    #eaf6ef 100%
+                );
+        }
+
+        .hero-content {
+            max-width: 650px;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: #dff2e6;
+            color: #1f7a4d;
+            padding: 9px 15px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .hero h1 {
+            font-size: 58px;
+            line-height: 1.08;
+            margin: 0 0 20px;
+            color: #173f2f;
+        }
+
+        .hero h1 span {
+            color: #1f7a4d;
+        }
+
+        .hero-description {
+            font-size: 19px;
+            line-height: 1.7;
+            color: #5d6b64;
+            margin-bottom: 30px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .primary-btn {
+            display: inline-block;
+            background: #1f7a4d;
+            color: white;
+            text-decoration: none;
+            padding: 15px 25px;
+            border-radius: 9px;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .primary-btn:hover {
+            background: #17633e;
+            transform: translateY(-2px);
+        }
+
+        .secondary-btn {
+            display: inline-block;
+            background: white;
+            color: #1f7a4d;
+            text-decoration: none;
+            padding: 15px 25px;
+            border: 1px solid #1f7a4d;
+            border-radius: 9px;
+            font-weight: bold;
+        }
+
+        .secondary-btn:hover {
+            background: #eef8f2;
+        }
+
+
+        /* ================= HERO VISUAL ================= */
+
+        .hero-visual {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-left: 60px;
+        }
+
+        .food-card {
+            width: 380px;
+            background: white;
+            padding: 30px;
+            border-radius: 22px;
+            box-shadow: 0 20px 50px rgba(31, 122, 77, 0.15);
+        }
+
+        .food-icon {
+            font-size: 65px;
+            margin-bottom: 10px;
+        }
+
+        .food-card h3 {
+            margin: 5px 0 20px;
+            font-size: 23px;
+        }
+
+        .prediction-box {
+            background: #f1f8f4;
+            padding: 18px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+
+        .prediction-box small {
+            color: #777;
+        }
+
+        .prediction-number {
+            font-size: 35px;
+            font-weight: bold;
+            color: #1f7a4d;
+            margin-top: 5px;
+        }
+
+        .urgency-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #fff4e5;
+            padding: 15px;
+            border-radius: 12px;
+        }
+
+        .urgency-label {
+            color: #777;
+            font-size: 14px;
+        }
+
+        .urgency-value {
+            color: #e07a00;
+            font-weight: bold;
+        }
+
+
+        /* ================= SECTION ================= */
+
+        .section {
+            padding: 75px 7%;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 45px;
+        }
+
+        .section-title h2 {
+            font-size: 36px;
+            margin-bottom: 12px;
+        }
+
+        .section-title p {
+            color: #6b756f;
+            font-size: 16px;
+        }
+
+
+        /* ================= PROBLEM ================= */
+
+        .problem-section {
+            background: white;
+        }
+
+        .problem-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            max-width: 1100px;
+            margin: auto;
+        }
+
+        .problem-card {
+            padding: 30px;
+            border: 1px solid #e4ebe6;
+            border-radius: 16px;
+            background: #fff;
+        }
+
+        .problem-icon {
+            font-size: 38px;
+            margin-bottom: 15px;
+        }
+
+        .problem-card h3 {
+            margin-bottom: 10px;
+        }
+
+        .problem-card p {
+            color: #69756e;
+            line-height: 1.6;
+        }
+
+
+        /* ================= SOLUTION ================= */
+
+        .solution-section {
+            background: #f1f8f4;
+        }
+
+        .solution-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .solution-step {
+            background: white;
+            padding: 25px 18px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+
+        .step-number {
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #1f7a4d;
+            color: white;
+            border-radius: 50%;
+            margin: auto auto 15px;
+            font-weight: bold;
+        }
+
+        .solution-step h3 {
+            font-size: 17px;
+        }
+
+        .solution-step p {
+            font-size: 13px;
+            color: #6b756f;
+            line-height: 1.5;
+        }
+
+
+        /* ================= FEATURES ================= */
+
+        .features-grid {
+            max-width: 1100px;
+            margin: auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 22px;
+        }
+
+        .feature-card {
+            padding: 28px;
+            border: 1px solid #e5ebe7;
+            border-radius: 15px;
+            background: white;
+        }
+
+        .feature-card .feature-icon {
+            font-size: 35px;
+        }
+
+        .feature-card h3 {
+            margin: 15px 0 10px;
+        }
+
+        .feature-card p {
+            color: #68736d;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+
+        /* ================= CTA ================= */
+
+        .cta {
+            margin: 30px 7% 70px;
+            padding: 55px 30px;
+            text-align: center;
+            border-radius: 22px;
+            background: #1f7a4d;
+            color: white;
+        }
+
+        .cta h2 {
+            font-size: 34px;
+            margin-bottom: 12px;
+        }
+
+        .cta p {
+            opacity: 0.9;
+            margin-bottom: 25px;
+        }
+
+        .cta-btn {
+            display: inline-block;
+            background: white;
+            color: #1f7a4d;
+            padding: 14px 25px;
+            border-radius: 9px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+
+        /* ================= FOOTER ================= */
+
+        footer {
+            background: #173f2f;
+            color: white;
+            padding: 35px 7%;
+            text-align: center;
+        }
+
+        footer p {
+            margin: 6px 0;
+            opacity: 0.8;
+            font-size: 14px;
+        }
+
+
+        /* ================= RESPONSIVE ================= */
+
+        @media (max-width: 900px) {
+
+            .hero {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .hero-content {
+                max-width: 800px;
+            }
+
+            .hero-buttons {
+                justify-content: center;
+            }
+
+            .hero-visual {
+                margin: 40px 0 0;
+            }
+
+            .solution-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .problem-grid,
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+
+        @media (max-width: 600px) {
+
+            .home-navbar {
+                padding: 0 20px;
+            }
+
+            .home-nav-links {
+                gap: 10px;
+            }
+
+            .home-nav-links a:not(.nav-predict) {
+                display: none;
+            }
+
+            .hero {
+                padding: 55px 20px;
+            }
+
+            .hero h1 {
+                font-size: 40px;
+            }
+
+            .hero-description {
+                font-size: 16px;
+            }
+
+            .hero-visual {
+                width: 100%;
+            }
+
+            .food-card {
+                width: 100%;
+            }
+
+            .problem-grid,
+            .features-grid,
+            .solution-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section {
+                padding: 55px 20px;
+            }
+
+            .cta {
+                margin: 20px;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     NAVBAR
+===================================================== -->
+
+<nav class="home-navbar">
+
+    <div class="home-logo">
+        🍱 FoodRescue AI
+    </div>
+
+    <div class="home-nav-links">
+
+        <a href="/">
+            Home
+        </a>
+
+        <a href="/dashboard">
+            Dashboard
+        </a>
+
+        <a href="/impact">
+            Impact
+        </a>
+
+        <a href="/donate"
+           class="nav-predict">
+            Predict Surplus
+        </a>
+
+    </div>
+
+</nav>
+
+
+<!-- =====================================================
+     HERO
+===================================================== -->
+
+<section class="hero">
+
+    <div class="hero-content">
+
+        <div class="hero-badge">
+            🌱 AI for Sustainable Food Rescue
+        </div>
+
+        <h1>
+            Turn Food Surplus
+            Into <span>Social Impact.</span>
+        </h1>
+
+        <p class="hero-description">
+
+            FoodRescue AI predicts surplus food,
+            identifies urgency, finds the best receiver
+            and helps rescue food before it becomes waste.
+
+        </p>
+
+        <div class="hero-buttons">
+
+            <a href="/donate"
+               class="primary-btn">
+
+                🍱 Predict Food Surplus
+
+            </a>
+
+            <a href="#how-it-works"
+               class="secondary-btn">
+
+                See How It Works
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- HERO DEMO CARD -->
+
+    <div class="hero-visual">
+
+        <div class="food-card">
+
+            <div class="food-icon">
+                🍲
+            </div>
+
+            <h3>
+                AI Surplus Prediction
+            </h3>
+
+            <div class="prediction-box">
+
+                <small>
+                    Estimated Surplus
+                </small>
+
+                <div class="prediction-number">
+                    73 meals
+                </div>
+
+            </div>
+
+            <div class="urgency-box">
+
+                <span class="urgency-label">
+                    Rescue Priority
+                </span>
+
+                <span class="urgency-value">
+                    HIGH
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     PROBLEM
+===================================================== -->
+
+<section class="section problem-section">
+
+    <div class="section-title">
+
+        <h2>
+            The Problem
+        </h2>
+
+        <p>
+            Food gets wasted not only because it is excess,
+            but because rescue decisions often happen too late.
+        </p>
+
+    </div>
+
+
+    <div class="problem-grid">
+
+        <div class="problem-card">
+
+            <div class="problem-icon">
+                🍛
+            </div>
+
+            <h3>
+                Surplus Food
+            </h3>
+
+            <p>
+                Colleges, hostels, restaurants and events
+                often prepare more food than required.
+            </p>
+
+        </div>
+
+
+        <div class="problem-card">
+
+            <div class="problem-icon">
+                ⏰
+            </div>
+
+            <h3>
+                Limited Time
+            </h3>
+
+            <p>
+                Edible food can become unusable when
+                rescue decisions are delayed.
+            </p>
+
+        </div>
+
+
+        <div class="problem-card">
+
+            <div class="problem-icon">
+                🗑️
+            </div>
+
+            <h3>
+                Food Waste
+            </h3>
+
+            <p>
+                Without quick matching, surplus food
+                may end up being thrown away.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     HOW IT WORKS
+===================================================== -->
+
+<section class="section solution-section"
+         id="how-it-works">
+
+    <div class="section-title">
+
+        <h2>
+            How FoodRescue AI Works
+        </h2>
+
+        <p>
+            A simple AI-powered rescue pipeline
+        </p>
+
+    </div>
+
+
+    <div class="solution-grid">
+
+        <div class="solution-step">
+
+            <div class="step-number">
+                1
+            </div>
+
+            <h3>
+                Predict
+            </h3>
+
+            <p>
+                AI predicts the expected surplus
+                using food and people data.
+            </p>
+
+        </div>
+
+
+        <div class="solution-step">
+
+            <div class="step-number">
+                2
+            </div>
+
+            <h3>
+                Prioritize
+            </h3>
+
+            <p>
+                The system calculates urgency
+                based on predicted surplus.
+            </p>
+
+        </div>
+
+
+        <div class="solution-step">
+
+            <div class="step-number">
+                3
+            </div>
+
+            <h3>
+                Match
+            </h3>
+
+            <p>
+                Receivers are ranked using
+                capacity and distance.
+            </p>
+
+        </div>
+
+
+        <div class="solution-step">
+
+            <div class="step-number">
+                4
+            </div>
+
+            <h3>
+                Rescue
+            </h3>
+
+            <p>
+                The selected receiver can
+                mark the food as rescued.
+            </p>
+
+        </div>
+
+
+        <div class="solution-step">
+
+            <div class="step-number">
+                5
+            </div>
+
+            <h3>
+                Measure
+            </h3>
+
+            <p>
+                The impact dashboard tracks
+                rescued meals and activity.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     FEATURES
+===================================================== -->
+
+<section class="section">
+
+    <div class="section-title">
+
+        <h2>
+            Smart Features
+        </h2>
+
+        <p>
+            Designed to make food rescue faster and smarter
+        </p>
+
+    </div>
+
+
+    <div class="features-grid">
+
+        <div class="feature-card">
+
+            <div class="feature-icon">
+                🤖
+            </div>
+
+            <h3>
+                ML Surplus Prediction
+            </h3>
+
+            <p>
+                A Random Forest model estimates
+                potential surplus meals from
+                structured food-demand data.
+            </p>
+
+        </div>
+
+
+        <div class="feature-card">
+
+            <div class="feature-icon">
+                🚨
+            </div>
+
+            <h3>
+                Urgency Scoring
+            </h3>
+
+            <p>
+                Surplus is categorized into
+                Critical, High, Medium and Low
+                rescue priority.
+            </p>
+
+        </div>
+
+
+        <div class="feature-card">
+
+            <div class="feature-icon">
+                🎯
+            </div>
+
+            <h3>
+                Smart Receiver Matching
+            </h3>
+
+            <p>
+                Receivers are ranked using
+                their capacity and estimated
+                distance from the food source.
+            </p>
+
+        </div>
+
+
+        <div class="feature-card">
+
+            <div class="feature-icon">
+                🚚
+            </div>
+
+            <h3>
+                Rescue Tracking
+            </h3>
+
+            <p>
+                Each rescue operation can be
+                tracked from ready-to-rescue
+                to successfully rescued.
+            </p>
+
+        </div>
+
+
+        <div class="feature-card">
+
+            <div class="feature-icon">
+                📊
+            </div>
+
+            <h3>
+                Impact Dashboard
+            </h3>
+
+            <p>
+                Track predicted surplus,
+                rescued meals, rescue rate
+                and urgency distribution.
+            </p>
+
+        </div>
+
+
+        <div class="feature-card">
+
+            <div class="feature-icon">
+                🌍
+            </div>
+
+            <h3>
+                Sustainable Impact
+            </h3>
+
+            <p>
+                Helps divert edible surplus
+                from potential waste toward
+                people who can use it.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     CALL TO ACTION
+===================================================== -->
+
+<section class="cta">
+
+    <h2>
+        Ready to Rescue Food?
+    </h2>
+
+    <p>
+        Use AI to predict surplus and start
+        the rescue process.
+    </p>
+
+    <a href="/donate"
+       class="cta-btn">
+
+        Start Prediction →
+
+    </a>
+
+</section>
+
+
+<!-- =====================================================
+     FOOTER
+===================================================== -->
+
+<footer>
+
+    <h3>
+        🍱 FoodRescue AI
+    </h3>
+
+    <p>
+        Smart Food Waste Rescue using AI
+    </p>
+
+    <p>
+        Chakravyuh 1.0 • Sustainable Development
+    </p>
+
+</footer>
+
+
+</body>
+
+</html>

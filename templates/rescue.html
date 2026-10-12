@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Food Rescued - FoodRescue AI</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f8f6;
+            color: #26352d;
+        }
+
+        .navbar {
+            height: 70px;
+            background: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 7%;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .logo {
+            text-decoration: none;
+            color: #238b57;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #444;
+            padding: 10px 17px;
+            border-radius: 8px;
+        }
+
+        .nav-links a:hover {
+            background: #e8f6ee;
+            color: #238b57;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 800px;
+            margin: 80px auto;
+            text-align: center;
+        }
+
+        .success-card {
+            background: white;
+            padding: 50px 30px;
+            border-radius: 18px;
+            box-shadow: 0 6px 25px rgba(0,0,0,0.08);
+        }
+
+        .success-icon {
+            font-size: 65px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #238b57;
+            margin-bottom: 15px;
+        }
+
+        .message {
+            color: #666;
+            font-size: 17px;
+            line-height: 1.6;
+        }
+
+        .impact-box {
+            margin: 30px auto;
+            padding: 20px;
+            background: #e8f6ee;
+            border-radius: 12px;
+            color: #238b57;
+            font-weight: bold;
+        }
+
+        .btn {
+            display: inline-block;
+            text-decoration: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin: 8px;
+            font-weight: bold;
+        }
+
+        .primary {
+            background: #238b57;
+            color: white;
+        }
+
+        .secondary {
+            background: #eee;
+            color: #333;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<nav class="navbar">
+
+    <a href="/" class="logo">
+        🍱 FoodRescue AI
+    </a>
+
+    <div class="nav-links">
+
+        <a href="/">Home</a>
+        <a href="/donate">Predict Surplus</a>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/impact">Impact</a>
+
+    </div>
+
+</nav>
+
+
+<div class="container">
+
+    <div class="success-card">
+
+        <div class="success-icon">
+            🎉
+        </div>
+
+        <h1>Food Successfully Rescued!</h1>
+
+        <p class="message">
+
+            Donation #{{ donation_id }} has been marked as
+            <strong>Rescued</strong>.
+
+            <br><br>
+
+            The surplus food has been successfully matched
+            with a receiver.
+
+        </p>
+
+        <div class="impact-box">
+
+            🌱 Food waste prevented  
+            <br>
+            🤝 Community support increased
+            <br>
+            ♻️ Sustainable food rescue completed
+
+        </div>
+
+        <a href="/impact" class="btn primary">
+            📊 View Impact
+        </a>
+
+        <a href="/dashboard" class="btn secondary">
+            ← Dashboard
+        </a>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

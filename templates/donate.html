@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Predict Food Surplus | FoodRescue AI</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+
+        .donate-page {
+            min-height: 100vh;
+            padding: 60px 20px;
+            background: #f8fafc;
+        }
+
+        .donate-container {
+            max-width: 900px;
+            margin: auto;
+        }
+
+        .page-heading {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .page-heading h1 {
+            font-size: 42px;
+            margin-bottom: 12px;
+            color: #0f172a;
+        }
+
+        .page-heading p {
+            color: #64748b;
+            font-size: 17px;
+        }
+
+        .prediction-card {
+            background: white;
+            border-radius: 20px;
+            padding: 35px;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+            margin-bottom: 30px;
+        }
+
+        .prediction-card h2 {
+            color: #0f172a;
+            margin-bottom: 25px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 22px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #334155;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 13px 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            font-size: 15px;
+            outline: none;
+            background: white;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #2563eb;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .submit-btn {
+            width: 100%;
+            margin-top: 25px;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            background: #2563eb;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .submit-btn:hover {
+            background: #1d4ed8;
+        }
+
+        /* RESULT */
+
+        .result-card {
+            background: white;
+            border-radius: 20px;
+            padding: 35px;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+        }
+
+        .result-card h2 {
+            text-align: center;
+            color: #0f172a;
+            margin-bottom: 25px;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .result-item {
+            padding: 18px;
+            background: #f8fafc;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .result-item span {
+            display: block;
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 6px;
+        }
+
+        .result-item strong {
+            color: #0f172a;
+            font-size: 18px;
+        }
+
+        /* SAFETY */
+
+        .safety-box {
+            margin-top: 25px;
+            padding: 22px;
+            border-radius: 14px;
+            text-align: center;
+        }
+
+        .safe {
+            background: #ecfdf5;
+            border: 1px solid #86efac;
+        }
+
+        .soon {
+            background: #fffbeb;
+            border: 1px solid #facc15;
+        }
+
+        .warning {
+            background: #fef2f2;
+            border: 1px solid #fca5a5;
+        }
+
+        .safety-box h3 {
+            margin-bottom: 8px;
+        }
+
+        .safety-box p {
+            color: #475569;
+            margin: 0;
+        }
+
+        .next-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+            justify-content: center;
+        }
+
+        .action-btn {
+            text-decoration: none;
+            padding: 12px 20px;
+            border-radius: 9px;
+            font-weight: 600;
+            background: #2563eb;
+            color: white;
+        }
+
+        .secondary-btn {
+            background: #e2e8f0;
+            color: #0f172a;
+        }
+
+        .info-box {
+            margin-top: 25px;
+            padding: 16px;
+            background: #eff6ff;
+            border-left: 4px solid #2563eb;
+            border-radius: 8px;
+            color: #334155;
+            font-size: 14px;
+        }
+
+        @media (max-width: 700px) {
+
+            .page-heading h1 {
+                font-size: 32px;
+            }
+
+            .form-grid,
+            .result-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .full-width {
+                grid-column: auto;
+            }
+
+            .next-actions {
+                flex-direction: column;
+            }
+
+            .action-btn {
+                text-align: center;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     NAVBAR
+===================================================== -->
+
+<nav class="navbar">
+
+    <div class="nav-logo">
+        🍱 FoodRescue AI
+    </div>
+
+    <div class="nav-links">
+
+        <a href="/">Home</a>
+
+        <a href="/dashboard">Dashboard</a>
+
+        <a href="/impact">Impact</a>
+
+        <a href="/donate"
+           class="active">
+            Predict Surplus
+        </a>
+
+    </div>
+
+</nav>
+
+
+<!-- =====================================================
+     MAIN PAGE
+===================================================== -->
+
+<section class="donate-page">
+
+    <div class="donate-container">
+
+
+        <!-- =================================================
+             PAGE HEADING
+        ================================================== -->
+
+        <div class="page-heading">
+
+            <h1>
+                🤖 AI Food Surplus Prediction
+            </h1>
+
+            <p>
+                Predict surplus food, check rescue urgency
+                and estimate food safety status.
+            </p>
+
+        </div>
+
+
+        <!-- =================================================
+             PREDICTION FORM
+        ================================================== -->
+
+        <div class="prediction-card">
+
+            <h2>
+                Enter Food Information
+            </h2>
+
+
+            <form action="/predict"
+                  method="POST">
+
+
+                <div class="form-grid">
+
+
+                    <!-- EXPECTED PEOPLE -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Expected People
+                        </label>
+
+                        <input
+                            type="number"
+                            name="expected_people"
+                            min="1"
+                            placeholder="Example: 500"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- FOOD PREPARED -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Food Prepared
+                        </label>
+
+                        <input
+                            type="number"
+                            name="food_prepared"
+                            min="1"
+                            placeholder="Example: 580 meals"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- PREVIOUS SURPLUS -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Previous Surplus
+                        </label>
+
+                        <input
+                            type="number"
+                            name="previous_surplus"
+                            min="0"
+                            placeholder="Example: 70 meals"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- FOOD TYPE -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Food Type
+                        </label>
+
+                        <select
+                            name="food_type"
+                            required
+                        >
+
+                            <option value="">
+                                Select Food Type
+                            </option>
+
+                            <option value="Rice">
+                                🍚 Rice
+                            </option>
+
+                            <option value="Curry">
+                                🍛 Curry
+                            </option>
+
+                            <option value="Vegetables">
+                                🥗 Vegetables
+                            </option>
+
+                            <option value="Bread">
+                                🍞 Bread
+                            </option>
+
+                            <option value="Salad">
+                                🥗 Salad
+                            </option>
+
+                            <option value="Other">
+                                🍱 Other
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- PREPARATION TIME -->
+
+                    <div class="form-group full-width">
+
+                        <label>
+                            Hours Since Preparation
+                        </label>
+
+                        <input
+                            type="number"
+                            name="preparation_time"
+                            min="0"
+                            step="1"
+                            placeholder="Example: 2"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="submit-btn">
+
+                    🔮 Predict Surplus & Check Safety
+
+                </button>
+
+
+            </form>
+
+
+            <div class="info-box">
+
+                <strong>💡 Prototype:</strong>
+
+                The system combines ML surplus prediction
+                with a prototype food rescue-window check.
+                Real deployment would also consider
+                temperature, storage conditions and
+                food-safety regulations.
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             AI RESULT
+        ================================================== -->
+
+        {% if prediction is defined %}
+
+        <div class="result-card">
+
+            <h2>
+                🎯 AI Prediction Result
+            </h2>
+
+
+            <div class="result-grid">
+
+
+                <!-- SURPLUS -->
+
+                <div class="result-item">
+
+                    <span>
+                        Predicted Surplus
+                    </span>
+
+                    <strong>
+                        {{ prediction }} meals
+                    </strong>
+
+                </div>
+
+
+                <!-- URGENCY -->
+
+                <div class="result-item">
+
+                    <span>
+                        Urgency Level
+                    </span>
+
+                    <strong>
+                        {{ urgency_level }}
+                    </strong>
+
+                </div>
+
+
+                <!-- SCORE -->
+
+                <div class="result-item">
+
+                    <span>
+                        Urgency Score
+                    </span>
+
+                    <strong>
+                        {{ urgency_score }}/100
+                    </strong>
+
+                </div>
+
+
+                <!-- FOOD TYPE -->
+
+                <div class="result-item">
+
+                    <span>
+                        Food Type
+                    </span>
+
+                    <strong>
+                        {{ food_type }}
+                    </strong>
+
+                </div>
+
+
+                <!-- PREPARATION -->
+
+                <div class="result-item">
+
+                    <span>
+                        Prepared
+                    </span>
+
+                    <strong>
+                        {{ preparation_time }} hours ago
+                    </strong>
+
+                </div>
+
+
+                <!-- SHELF LIFE -->
+
+                <div class="result-item">
+
+                    <span>
+                        Prototype Rescue Window
+                    </span>
+
+                    <strong>
+                        {{ shelf_life }} hours
+                    </strong>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- =================================================
+                 SAFETY STATUS
+            ================================================== -->
+
+            {% if safety_status == "Safe to Rescue" %}
+
+            <div class="safety-box safe">
+
+                <h3>
+                    ✅ SAFE TO RESCUE
+                </h3>
+
+                <p>
+                    Food is within the prototype rescue
+                    window. Prioritize matching it with
+                    a suitable receiver.
+                </p>
+
+            </div>
+
+
+            {% elif safety_status == "Rescue Soon" %}
+
+            <div class="safety-box soon">
+
+                <h3>
+                    ⚠️ RESCUE SOON
+                </h3>
+
+                <p>
+                    Food is approaching its prototype
+                    rescue window. Prioritize quick
+                    redistribution.
+                </p>
+
+            </div>
+
+
+            {% else %}
+
+            <div class="safety-box warning">
+
+                <h3>
+                    🚨 SAFETY WARNING
+                </h3>
+
+                <p>
+                    The prototype rescue window has been
+                    exceeded. Do not automatically
+                    distribute this food. Verify actual
+                    food-safety conditions first.
+                </p>
+
+            </div>
+
+            {% endif %}
+
+
+            <!-- =================================================
+                 ACTION BUTTONS
+            ================================================== -->
+
+            <div class="next-actions">
+
+                <a
+                    href="/match/{{ donation_id }}"
+                    class="action-btn">
+
+                    🤝 Find Best Receiver
+
+                </a>
+
+
+                <a
+                    href="/dashboard"
+                    class="action-btn secondary-btn">
+
+                    📊 View Dashboard
+
+                </a>
+
+            </div>
+
+
+        </div>
+
+        {% endif %}
+
+
+    </div>
+
+</section>
+
+
+</body>
+
+</html>
